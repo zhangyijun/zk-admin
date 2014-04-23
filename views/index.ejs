@@ -1,0 +1,116 @@
+<html>
+<head>
+  <title>ZooKeeper Admin</title>
+  <link rel='stylesheet', href='../components/bootstrap/dist/css/bootstrap.css'/>
+  <link rel='stylesheet', href='../components/bootstrap/dist/css/bootstrap-theme.css'/>
+  <link rel='stylesheet', href='./style.css'/>
+
+</head>
+<body>
+
+<div class="container">
+<div>
+  <ol class="breadcrumb">
+    <%
+      var names = (path || '').split('/');
+      for (var i=0; i<names.length; i++) {
+        var href = names.slice(0, i+1).join('/');
+        var name = names[i];
+        %><li><a href="?path=<%=href%>"><%=(name || 'root')%></a></li><%
+      }
+    %>
+  </ol>
+</div>
+
+<div class="row">
+<div class="col-md-8" role="main">
+<div class="tree">
+  <ul>
+<%
+  function hasChild(node) {
+    if (!node) return false;
+    for (var k in node) return true;
+    return false;
+  }
+
+  function showTree(path, name, node) {
+%>
+  <li data-path="<%=path%>"><span><i class="glyphicon glyphicon-plus-sign"></i> <%=name%> </span><a href="#" class="znode-view">view</a>
+<%
+    if (hasChild(node)) {
+      %><ul><%
+      for (var key in node) {
+        showTree(path+'/' +key, key, node[key]);
+      }
+      %></ul><%
+    }
+    %></li><%
+  }
+
+  showTree('', 'root / ', tree);
+%>
+  </ul>
+
+</div>
+
+</div>
+
+<div class="col-md-4">
+
+<div id="znodeDetail" class="affix-top affix">
+</div>  <!-- znodeDetail -->
+</div>  <!-- right col -->
+
+</div><!-- end row -->
+
+</div><!-- well -->
+
+<div class="footer">Created by zhangyijun</div>
+
+<script type="text/x-template" id="loginTempalte"></script>
+<script type="text/x-template" id="mainTemplate">
+  <h1>Welcome Zookeeper Admin</h1>
+</script>
+<script type="text/x-template" id="viewNodeTemplate">
+<h3 id="pathTitle"></h3>
+<p><label>Mode: <span id="createMode"></span></label></p>
+<!-- more detail -->
+<p>
+  <textarea id="data" class="form-control" rows="5"></textarea>
+</p>
+<p>
+  <a href="#" class="btn btn-primary saveData">Save</a>
+  <a href="#" class="btn btn-success addChild">Add Child</a>
+  <a href="#" class="btn btn-danger removeNode">Remvoe</a>
+</p>
+</script>
+
+<script type="text/x-template" id="createNodeTemplate">
+<h3 id="pathTitle"></h3>
+<p><input type="text" id="name" class="input-block" /></p>
+<p>
+  <select id="createMode">
+    <option value="1">PERSISTENT</option>
+    <option value="2">PERSISTENT_SEQUENTIAL</option>
+    <option value="3">EPHEMERAL</option>
+    <option value="4">EPHEMERAL_SEQUENTIAL</option>
+  </select>
+</p>
+<p>
+  <textarea id="data" class="form-control" rows="5"></textarea>
+</p>
+<p>
+  <a href="#" class="btn btn-primary createNode">Create</a>
+  <a href="#" class="btn cancelCreate">Cancel</a>
+</p>
+</script>
+
+  <script src="../components/jquery/dist/jquery.js"></script>
+  <script src="../components/bootstrap/dist/js/bootstrap.js"></script>
+  <script>
+    var currentPath = "<%=path%>"
+  </script>
+  <script src="./index.js"></script>
+
+</body>
+</html>
